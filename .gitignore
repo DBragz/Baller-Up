@@ -1,0 +1,4 @@
+.bmad-core
+.cursor
+node_modules/
+data.db
