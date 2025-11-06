@@ -110,16 +110,17 @@ function App() {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto', padding: 16 }}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-        <img src="/baller-up.svg" alt="Baller Up logo" width={200} height={200} style={{ display: 'block' }} />
-        <h1 style={{ marginTop: 8, marginBottom: 0, textAlign: 'center' }}>Baller Up</h1>
+    <div className="app-container">
+      <div className="header">
+        <img src="/baller-up.svg" alt="Baller Up logo" className="logo-img" />
+        <h1 className="title">Baller Up</h1>
       </div>
-      <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
-        <div style={{ flex: 1, padding: 12, border: '1px solid #ddd', borderRadius: 8 }}>
-          <h2 style={{ margin: 0, marginBottom: 8, textAlign: 'center' }}>Good Guys</h2>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+      <div className="scores-container">
+        <div className="score-card good">
+          <h2 className="score-title">Good Guys</h2>
+          <div className="score-display">
             <button
+              className="score-button"
               onClick={() => {
                 const next = Math.max(0, goodScore - 1)
                 setGoodScore(next)
@@ -127,8 +128,9 @@ function App() {
               }}
               disabled={loading}
             >-</button>
-            <span style={{ fontSize: 32, minWidth: 48, textAlign: 'center' }}>{goodScore}</span>
+            <span className="score-value">{goodScore}</span>
             <button
+              className="score-button"
               onClick={() => {
                 const next = goodScore + 1
                 setGoodScore(next)
@@ -138,10 +140,11 @@ function App() {
             >+</button>
           </div>
         </div>
-        <div style={{ flex: 1, padding: 12, border: '1px solid #ddd', borderRadius: 8 }}>
-          <h2 style={{ margin: 0, marginBottom: 8, textAlign: 'center' }}>Bad Guys</h2>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+        <div className="score-card bad">
+          <h2 className="score-title">Bad Guys</h2>
+          <div className="score-display">
             <button
+              className="score-button"
               onClick={() => {
                 const next = Math.max(0, badScore - 1)
                 setBadScore(next)
@@ -149,8 +152,9 @@ function App() {
               }}
               disabled={loading}
             >-</button>
-            <span style={{ fontSize: 32, minWidth: 48, textAlign: 'center' }}>{badScore}</span>
+            <span className="score-value">{badScore}</span>
             <button
+              className="score-button"
               onClick={() => {
                 const next = badScore + 1
                 setBadScore(next)
@@ -162,53 +166,51 @@ function App() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+      <div className="name-input-container">
         <input
+          className="name-input"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Enter your name"
-          style={{ flex: 1, padding: 8 }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') handleJoin()
           }}
         />
-        <button onClick={handleJoin} disabled={loading || !name.trim()}>
+        <button className="join-button" onClick={handleJoin} disabled={loading || !name.trim()}>
           Join
         </button>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>Queue ({queue.length})</h2>
-        <button onClick={handleNext} disabled={loading || queue.length === 0}>
+      <div className="queue-header">
+        <h2 className="queue-title">Queue ({queue.length})</h2>
+        <button className="next-button" onClick={handleNext} disabled={loading || queue.length === 0}>
           Next Up
         </button>
       </div>
 
       {error && (
-        <div style={{ color: 'white', background: '#d33', padding: 8, marginBottom: 12 }}>
+        <div className="error-message">
           {error}
         </div>
       )}
 
       {lastNext && (
-        <div style={{ color: '#0a0', background: '#e9ffe9', padding: 8, marginBottom: 12 }}>
+        <div className="success-message">
           Last called: <strong>{lastNext}</strong>
         </div>
       )}
 
-      <ol style={{ paddingLeft: 18 }}>
+      <ol className="queue-list">
         {queue.map((n) => (
-          <li key={n} style={{ marginBottom: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ flex: 1 }}>{n}</span>
-            <button onClick={() => handleLeave(n)} disabled={loading}>
+          <li key={n} className="queue-item">
+            <span className="queue-item-name">{n}</span>
+            <button className="remove-button" onClick={() => handleLeave(n)} disabled={loading}>
               Remove
             </button>
           </li>
         ))}
-        {queue.length === 0 && <p style={{ opacity: 0.7 }}>No one in line yet.</p>}
+        {queue.length === 0 && <p className="empty-queue">No one in line yet.</p>}
       </ol>
-
-
     </div>
   )
 }
