@@ -130,9 +130,7 @@ function App() {
         {queue.length === 0 && <p style={{ opacity: 0.7 }}>No one in line yet.</p>}
       </ol>
 
-      <p style={{ marginTop: 24, fontSize: 12, opacity: 0.7 }}>
-        Backend: {apiUrl}
-      </p>
+      
     </div>
   )
 }
