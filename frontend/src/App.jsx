@@ -14,6 +14,8 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [lastNext, setLastNext] = useState(null)
+  const [goodScore, setGoodScore] = useState(0)
+  const [badScore, setBadScore] = useState(0)
 
   async function fetchQueue() {
     try {
@@ -28,7 +30,36 @@ function App() {
 
   useEffect(() => {
     fetchQueue()
+      ; (async () => {
+        try {
+          const res = await fetch(`${apiUrl}/api/scores`)
+          const data = await res.json()
+          if (typeof data.good === 'number') setGoodScore(data.good)
+          if (typeof data.bad === 'number') setBadScore(data.bad)
+        } catch (e) {
+          // ignore, keep defaults
+        }
+      })()
   }, [])
+  async function updateScores(nextGood, nextBad) {
+    try {
+      const res = await fetch(`${apiUrl}/api/scores`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...(typeof nextGood === 'number' ? { good: nextGood } : {}),
+          ...(typeof nextBad === 'number' ? { bad: nextBad } : {}),
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Failed to update scores')
+      if (typeof data.good === 'number') setGoodScore(data.good)
+      if (typeof data.bad === 'number') setBadScore(data.bad)
+    } catch (e) {
+      setError(e.message || 'Failed to update scores')
+    }
+  }
+
 
   async function post(path, body) {
     setLoading(true)
@@ -84,6 +115,53 @@ function App() {
         <img src="/baller-up.svg" alt="Baller Up logo" width={200} height={200} style={{ display: 'block' }} />
         <h1 style={{ marginTop: 8, marginBottom: 0, textAlign: 'center' }}>Baller Up</h1>
       </div>
+      <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
+        <div style={{ flex: 1, padding: 12, border: '1px solid #ddd', borderRadius: 8 }}>
+          <h2 style={{ margin: 0, marginBottom: 8, textAlign: 'center' }}>Good Guys</h2>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <button
+              onClick={() => {
+                const next = Math.max(0, goodScore - 1)
+                setGoodScore(next)
+                updateScores(next, undefined)
+              }}
+              disabled={loading}
+            >-</button>
+            <span style={{ fontSize: 32, minWidth: 48, textAlign: 'center' }}>{goodScore}</span>
+            <button
+              onClick={() => {
+                const next = goodScore + 1
+                setGoodScore(next)
+                updateScores(next, undefined)
+              }}
+              disabled={loading}
+            >+</button>
+          </div>
+        </div>
+        <div style={{ flex: 1, padding: 12, border: '1px solid #ddd', borderRadius: 8 }}>
+          <h2 style={{ margin: 0, marginBottom: 8, textAlign: 'center' }}>Bad Guys</h2>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <button
+              onClick={() => {
+                const next = Math.max(0, badScore - 1)
+                setBadScore(next)
+                updateScores(undefined, next)
+              }}
+              disabled={loading}
+            >-</button>
+            <span style={{ fontSize: 32, minWidth: 48, textAlign: 'center' }}>{badScore}</span>
+            <button
+              onClick={() => {
+                const next = badScore + 1
+                setBadScore(next)
+                updateScores(undefined, next)
+              }}
+              disabled={loading}
+            >+</button>
+          </div>
+        </div>
+      </div>
+
       <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
         <input
           value={name}
@@ -130,7 +208,7 @@ function App() {
         {queue.length === 0 && <p style={{ opacity: 0.7 }}>No one in line yet.</p>}
       </ol>
 
-      
+
     </div>
   )
 }
